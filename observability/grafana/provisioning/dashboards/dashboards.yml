@@ -1,0 +1,26 @@
+apiVersion: 1
+
+providers:
+  # Defines a dashboard provider for Grafana.
+  # This tells Grafana where to load dashboard JSON files from.
+  - name: Deployment Insights Dashboards
+
+    # Default Grafana organization.
+    orgId: 1
+
+    # Folder name shown in the Grafana UI.
+    folder: Deployment Insights
+
+    # Dashboards are loaded from files, not created manually in the UI.
+    type: file
+
+    # If the dashboard JSON file is removed, Grafana is allowed to remove it too.
+    disableDeletion: false
+
+    # Grafana checks for dashboard file updates every 10 seconds.
+    updateIntervalSeconds: 10
+
+    options:
+      # Path inside the Grafana container.
+      # Docker Compose maps our local dashboards folder to this path.
+      path: /var/lib/grafana/dashboards

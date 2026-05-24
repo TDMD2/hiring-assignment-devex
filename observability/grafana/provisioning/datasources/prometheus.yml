@@ -1,0 +1,21 @@
+apiVersion: 1
+
+datasources:
+  # This creates a Grafana datasource named Prometheus.
+  # Grafana panels use this datasource to query metrics.
+  - name: Prometheus
+
+    # Stable ID used by dashboard JSON files.
+    uid: Prometheus
+
+    # Tells Grafana this datasource is Prometheus.
+    type: prometheus
+
+    # Grafana queries Prometheus from inside the Docker network.
+    access: proxy
+
+    # Docker Compose service name + Prometheus container port.
+    url: http://prometheus:9090
+
+    # Makes Prometheus the default datasource for dashboards.
+    isDefault: true
