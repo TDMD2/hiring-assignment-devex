@@ -1,0 +1,65 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: deployment-registry-mongo-compose
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./deployment-registry/seed-data.json:/seed-data.json:ro
+    command: >
+      sh -c "mongod --bind_ip_all &
+      sleep 5 &&
+      mongoimport --host localhost --db deployment-registry --collection deployments --jsonArray --file /seed-data.json --drop &&
+      wait"
+
+  deployment-registry:
+    build:
+      context: ./deployment-registry/src/DeploymentRegistry.Api
+    container_name: deployment-registry-api
+    ports:
+      - "5176:8080"
+    environment:
+      MongoDb__ConnectionString: mongodb://mongodb:27017
+      MongoDb__DatabaseName: deployment-registry
+      MongoDb__CollectionName: deployments
+    depends_on:
+      - mongodb
+
+  deployment-insights:
+    build:
+      context: ./deployment-insights
+    container_name: deployment-insights-api
+    ports:
+      - "8000:8000"
+    environment:
+      REGISTRY_BASE_URL: http://deployment-registry:8080
+    depends_on:
+      - deployment-registry
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: deployment-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - deployment-insights
+
+  grafana:
+    image: grafana/grafana:11.3.1
+    container_name: deployment-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+
+volumes:
+  mongo-data:

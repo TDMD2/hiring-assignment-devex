@@ -1,0 +1,21 @@
+.venv
+__pycache__
+.pytest_cache
+tests/__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Local/editor files
+.env
+.vscode
+.idea
+
+# Test/cache files
+.coverage
+htmlcov
+
+# Duplicate/local copy files
+app - Copy.py
+README - Copy.md
