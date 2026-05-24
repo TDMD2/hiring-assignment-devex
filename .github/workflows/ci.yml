@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: ghcr.io/${{ github.repository }}/deployment-insights
+      IMAGE_NAME: ghcr.io/tdmd2/hiring-assignment-devex/deployment-insights
 
     steps:
       - name: Checkout repository
